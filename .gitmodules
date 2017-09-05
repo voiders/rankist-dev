@@ -1,0 +1,8 @@
+[submodule "api"]
+	path = api
+	url = https://github.com/voiders/rankist-api.git
+	branch = develop
+[submodule "client"]
+	path = client
+	url = https://github.com/voiders/rankist-client.git
+	branch = develop

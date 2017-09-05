@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx:1.13.3
+    links:
+      - client
+      - api
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+  api:
+    image: node:8.4.0
+    volumes:
+      - ./api/:/app/
+    working_dir: /app/
+    command: npm start -- --legacy-watch
+    expose:
+      - "80"
+    links:
+      - rethinkdb
+  client:
+    image: node:8.4.0
+    working_dir: /app/
+    command: npm start
+    volumes:
+      - ./client/:/app/
+    expose:
+      - "80"
+  rethinkdb:
+    image: rethinkdb:2.3.5
+    expose:
+      - "27017"
+    ports:
+      - "28015:28015"
+      - "8080:8080"
+    volumes:
+      - ./data:/data/
