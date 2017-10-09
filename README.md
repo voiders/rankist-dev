@@ -9,6 +9,8 @@ git submodule init && git submodule update
 git submodule foreach git checkout develop
 git submodule foreach npm install
 docker-compose build
+export MYSQL_ROOT_PASSWORD=root
+export MYSQL_DATABASE=rankist
 docker-compose up -d
 open http://localhost:8000
 ```

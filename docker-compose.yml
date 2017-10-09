@@ -1,9 +1,12 @@
-version: '2'
+version: '3'
 
 services:
   nginx:
     image: nginx:1.13.3
     links:
+      - client:client
+      - api:api
+    depends_on:
       - client
       - api
     ports:
@@ -18,22 +21,36 @@ services:
     command: npm start -- --legacy-watch
     expose:
       - "80"
-    links:
+    depends_on:
+      - mysql
       - rethinkdb
+    links:
+      - rethinkdb:rethinkdb
+      - mysql:mysql
   client:
     image: node:8.4.0
     working_dir: /app/
     command: npm start
-    volumes:
-      - ./client/:/app/
     expose:
       - "80"
+    environment:
+      PORT: "80"
+      HOST: "0.0.0.0"
+    volumes:
+      - ./client/:/app/
   rethinkdb:
     image: rethinkdb:2.3.5
-    expose:
-      - "27017"
     ports:
       - "28015:28015"
       - "8080:8080"
     volumes:
-      - ./data:/data/
+      - ./data/rethinkdb:/data/
+  mysql:
+    image: mysql:8.0.3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
